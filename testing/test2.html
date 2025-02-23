@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>API Testing Interface</title>
+  <!-- Bootstrap CSS CDN -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+</head>
+<body>
+  <div class="container my-5">
+    <h1 class="text-center mb-4">API Testing Interface</h1>
+    <!-- Nav Tabs -->
+    <ul class="nav nav-tabs" id="apiTabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button
+          class="nav-link active"
+          id="login-tab"
+          data-bs-toggle="tab"
+          data-bs-target="#login"
+          type="button"
+          role="tab"
+          aria-controls="login"
+          aria-selected="true"
+        >
+          Login
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button
+          class="nav-link"
+          id="register-tab"
+          data-bs-toggle="tab"
+          data-bs-target="#register"
+          type="button"
+          role="tab"
+          aria-controls="register"
+          aria-selected="false"
+        >
+          Register
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button
+          class="nav-link"
+          id="users-tab"
+          data-bs-toggle="tab"
+          data-bs-target="#users"
+          type="button"
+          role="tab"
+          aria-controls="users"
+          aria-selected="false"
+        >
+          Get All Users
+        </button>
+      </li>
+    </ul>
+    <div class="tab-content" id="apiTabsContent">
+      <!-- Login Tab -->
+      <div
+        class="tab-pane fade show active p-4 border border-top-0"
+        id="login"
+        role="tabpanel"
+        aria-labelledby="login-tab"
+      >
+        <h3>Login</h3>
+        <form id="loginForm">
+          <div class="mb-3">
+            <label for="loginEmail" class="form-label">Email address</label>
+            <input
+              type="email"
+              class="form-control"
+              id="loginEmail"
+              placeholder="Enter email"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="loginPassword" class="form-label">Password</label>
+            <input
+              type="password"
+              class="form-control"
+              id="loginPassword"
+              placeholder="Password"
+              required
+            />
+          </div>
+          <button type="submit" class="btn btn-primary">Login</button>
+        </form>
+        <div id="loginResult" class="mt-3"></div>
+      </div>
+      <!-- Register Tab -->
+      <div
+        class="tab-pane fade p-4 border border-top-0"
+        id="register"
+        role="tabpanel"
+        aria-labelledby="register-tab"
+      >
+        <h3>Register</h3>
+        <form id="registerForm" enctype="multipart/form-data">
+          <div class="mb-3">
+            <label for="firstName" class="form-label">First Name</label>
+            <input
+              type="text"
+              class="form-control"
+              id="firstName"
+              placeholder="First Name"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="lastName" class="form-label">Last Name</label>
+            <input
+              type="text"
+              class="form-control"
+              id="lastName"
+              placeholder="Last Name"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="registerEmail" class="form-label">Email</label>
+            <input
+              type="email"
+              class="form-control"
+              id="registerEmail"
+              placeholder="Email"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="registerPassword" class="form-label">Password</label>
+            <input
+              type="password"
+              class="form-control"
+              id="registerPassword"
+              placeholder="Password"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="role" class="form-label">Role</label>
+            <input
+              type="text"
+              class="form-control"
+              id="role"
+              placeholder="Role"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="avatar" class="form-label">Avatar (Image)</label>
+            <input
+              type="file"
+              class="form-control"
+              id="avatar"
+              accept="image/*"
+              required
+            />
+          </div>
+          <button type="submit" class="btn btn-primary">Register</button>
+        </form>
+        <div id="registerResult" class="mt-3"></div>
+      </div>
+      <!-- Get All Users Tab -->
+      <div
+        class="tab-pane fade p-4 border border-top-0"
+        id="users"
+        role="tabpanel"
+        aria-labelledby="users-tab"
+      >
+        <h3>Get All Users</h3>
+        <form id="usersForm">
+          <div class="mb-3">
+            <label for="limit" class="form-label">Limit</label>
+            <input
+              type="number"
+              class="form-control"
+              id="limit"
+              placeholder="Limit"
+              value="2"
+            />
+          </div>
+          <div class="mb-3">
+            <label for="page" class="form-label">Page</label>
+            <input
+              type="number"
+              class="form-control"
+              id="page"
+              placeholder="Page"
+              value="1"
+            />
+          </div>
+          <button type="submit" class="btn btn-primary">Fetch Users</button>
+        </form>
+        <div id="usersResult" class="mt-3"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Variable to store the JWT token after login
+    let authToken = '';
+
+    // Login Form Handler
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
+
+      try {
+        const response = await fetch('http://localhost:5000/api/users/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await response.json();
+        if (response.ok) {
+          authToken = data.data.token;
+          document.getElementById('loginResult').innerHTML =
+            '<div class="alert alert-success">Login successful! Token saved.</div>';
+        } else {
+          document.getElementById('loginResult').innerHTML =
+            '<div class="alert alert-danger">' +
+            (data.message || 'Login failed') +
+            '</div>';
+        }
+      } catch (error) {
+        document.getElementById('loginResult').innerHTML =
+          '<div class="alert alert-danger">Error: ' + error.message + '</div>';
+      }
+    });
+
+    // Register Form Handler
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const firstName = document.getElementById('firstName').value;
+      const lastName = document.getElementById('lastName').value;
+      const email = document.getElementById('registerEmail').value;
+      const password = document.getElementById('registerPassword').value;
+      const role = document.getElementById('role').value;
+      const avatarFile = document.getElementById('avatar').files[0];
+
+      const formData = new FormData();
+      formData.append('firstName', firstName);
+      formData.append('lastName', lastName);
+      formData.append('email', email);
+      formData.append('password', password);
+      formData.append('role', role);
+      formData.append('avatar', avatarFile);
+
+      try {
+        const response = await fetch('http://localhost:5000/api/users/register', {
+          method: 'POST',
+          body: formData
+        });
+        const data = await response.json();
+        if (response.ok) {
+          document.getElementById('registerResult').innerHTML =
+            '<div class="alert alert-success">Registration successful!</div>';
+        } else {
+          document.getElementById('registerResult').innerHTML =
+            '<div class="alert alert-danger">' +
+            (data.message || 'Registration failed') +
+            '</div>';
+        }
+      } catch (error) {
+        document.getElementById('registerResult').innerHTML =
+          '<div class="alert alert-danger">Error: ' + error.message + '</div>';
+      }
+    });
+
+    // Get All Users Form Handler
+    document.getElementById('usersForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const limit = document.getElementById('limit').value;
+      const page = document.getElementById('page').value;
+
+      try {
+        const response = await fetch(`http://localhost:5000/api/users?limit=${limit}&page=${page}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + authToken
+          }
+        });
+        const data = await response.json();
+        if (response.ok) {
+          let usersHtml = '<ul class="list-group">';
+          data.data.users.forEach(user => {
+            usersHtml += `<li class="list-group-item">${user.firstName} ${user.lastName} - ${user.email}</li>`;
+          });
+          usersHtml += '</ul>';
+          document.getElementById('usersResult').innerHTML = usersHtml;
+        } else {
+          document.getElementById('usersResult').innerHTML =
+            '<div class="alert alert-danger">' +
+            (data.message || 'Failed to fetch users') +
+            '</div>';
+        }
+      } catch (error) {
+        document.getElementById('usersResult').innerHTML =
+          '<div class="alert alert-danger">Error: ' + error.message + '</div>';
+      }
+    });
+  </script>
+</body>
+</html>

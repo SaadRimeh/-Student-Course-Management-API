@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Test Get All Users API</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      padding: 20px;
+      margin: 0;
+    }
+    h1 {
+      text-align: center;
+    }
+    .users-container {
+      max-width: 800px;
+      margin: 20px auto;
+    }
+    .user-card {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 15px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .user-card img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-right: 15px;
+    }
+    .user-info h2 {
+      margin: 0 0 5px;
+      font-size: 20px;
+    }
+    .user-info p {
+      margin: 3px 0;
+      color: #555;
+    }
+    .pagination {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .pagination button {
+      padding: 10px 15px;
+      font-size: 16px;
+      margin: 0 5px;
+      border: none;
+      border-radius: 4px;
+      background: #007BFF;
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .pagination button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+  <h1>All Users</h1>
+  <div class="users-container" id="usersContainer">
+    <!-- User cards will be inserted here -->
+  </div>
+  <div class="pagination">
+    <button id="prevBtn" disabled>Previous</button>
+    <span id="pageIndicator">Page 1</span>
+    <button id="nextBtn">Next</button>
+  </div>
+
+  <script>
+    let currentPage = 1;
+    const limit = 2; // Default limit as set by your API
+
+    async function loadUsers(page) {
+      try {
+        // Replace with your actual API endpoint
+        const response = await fetch(`http://localhost:5000/api/users?limit=${limit}&page=${page}`);
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const result = await response.json();
+        const users = result.data.users;
+        displayUsers(users);
+        document.getElementById('pageIndicator').textContent = 'Page ' + page;
+        // Disable the "Previous" button if on the first page
+        document.getElementById('prevBtn').disabled = page === 1;
+      } catch (error) {
+        console.error('Error loading users:', error);
+        document.getElementById('usersContainer').innerHTML = '<p>Error loading users.</p>';
+      }
+    }
+
+    function displayUsers(users) {
+      const container = document.getElementById('usersContainer');
+      container.innerHTML = '';
+      if (!users || users.length === 0) {
+        container.innerHTML = '<p>No users found.</p>';
+        return;
+      }
+      users.forEach(user => {
+        const card = document.createElement('div');
+        card.className = 'user-card';
+        // Use the avatar from the user or fallback to default 'upload/profile.png'
+        const avatar = document.createElement('img');
+        avatar.src = user.avatar ? user.avatar : 'upload/profile.png';
+        avatar.alt = 'User Avatar';
+        const info = document.createElement('div');
+        info.className = 'user-info';
+        info.innerHTML = `
+          <h2>${user.firstName} ${user.lastName}</h2>
+          <p>Email: ${user.email}</p>
+        `;
+        card.appendChild(avatar);
+        card.appendChild(info);
+        container.appendChild(card);
+      });
+    }
+
+    document.getElementById('prevBtn').addEventListener('click', () => {
+      if (currentPage > 1) {
+        currentPage--;
+        loadUsers(currentPage);
+      }
+    });
+
+    document.getElementById('nextBtn').addEventListener('click', () => {
+      currentPage++;
+      loadUsers(currentPage);
+    });
+
+    // Load the first page of users on page load
+    loadUsers(currentPage);
+  </script>
+</body>
+</html>
