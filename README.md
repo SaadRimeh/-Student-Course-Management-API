@@ -95,6 +95,14 @@ Contributions are welcome! To get started:
 3. Commit your changes. 💾
 4. Open a pull request to merge your changes into the master branch. 🔀
 
+Contact
+
+For questions or suggestions, reach out via:
+
+GitHub: SaadRimeh
+
+Email: saad.rimeh.01@gimal.com
+
 
 
 
