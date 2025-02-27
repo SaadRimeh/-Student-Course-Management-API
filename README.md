@@ -30,7 +30,7 @@ This is a RESTful API built using **Node.js**, **Express.js**, and **MongoDB** f
 
 
 
- 🛠️ Technologies Used
+ 🛠️ Technology Used
 
 - Node.js: The runtime environment. ⚙️
 - Express.js: The web framework for building RESTful APIs. 🌐
