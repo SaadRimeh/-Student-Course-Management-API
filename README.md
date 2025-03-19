@@ -58,7 +58,7 @@ This is a RESTful API built using **Node.js**, **Express.js**, and **MongoDB** f
  1. Clone the Repository
 
 
-git clone https://github.com/your-username/your-repo-name.git
+git clone https://github.com/SaadRimeh/-Student-Course-Management-API.git
 cd your-repo-name
 
 
